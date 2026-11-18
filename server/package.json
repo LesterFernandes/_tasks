@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=24.3.0"
+  },
+  "scripts": {
+    "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true });\"",
+    "build": "pnpm run clean && tsc -p tsconfig.json",
+    "start": "node --enable-source-maps --env-file-if-exists=.env dist/server.js",
+    "dev": "nodemon",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@fastify/one-line-logger": "^2.2.1",
+    "close-with-grace": "^2.5.0",
+    "dotenv": "^18.0.10",
+    "fastify": "^5.12.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "nodemon": "^3.1.14",
+    "typescript": "^7.0.2"
+  }
+}
