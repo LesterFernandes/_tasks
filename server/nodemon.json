@@ -2,7 +2,7 @@
   "watch": ["src", ".env", "tsconfig.json"],
   "ext": "ts,json,env",
   "ignore": ["dist", "node_modules"],
-  "exec": "pnpm run typecheck && node --enable-source-maps --env-file-if-exists=.env src/server.ts",
+  "exec": "node --enable-source-maps --env-file-if-exists=.env src/server.ts",
   "signal": "SIGTERM",
   "env": {
     "NODE_ENV": "development"

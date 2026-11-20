@@ -1,0 +1,35 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "a13abb80-67c0-4939-80dc-9f4126012941",
+  "prevIds": [
+    "11a6c1bd-9762-4f30-ada4-d24a713ce2bb"
+  ],
+  "footprints": [
+    {
+      "statementType": "drop_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "users",
+        "age"
+      ],
+      "writes": [
+        "s|col|public.users.age",
+        "n|col|public.users.age",
+        "e|col|public.users.age"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"users\",\"age\"]"
+    }
+  ]
+}
