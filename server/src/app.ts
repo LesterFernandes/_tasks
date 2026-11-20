@@ -1,18 +1,16 @@
 import fastifyAutoload from "@fastify/autoload";
 import {
-  type FastifyError,
   type FastifyInstance,
   type FastifyPluginOptions,
   type FastifyReply,
   type FastifyRequest,
 } from "fastify";
-import path from "node:path";
 import {
-  hasZodFastifySchemaValidationErrors,
-  isResponseSerializationError,
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
+import path from "node:path";
+import errorHandler from "./errors/handler.ts";
 
 export default async function App(
   fastify: FastifyInstance,
@@ -42,57 +40,7 @@ export default async function App(
   });
 
   // configuring error handler
-  fastify.setErrorHandler(
-    (err: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
-      fastify.log.error(
-        {
-          err,
-          request: {
-            method: request.method,
-            url: request.url,
-            query: request.query,
-            params: request.params,
-          },
-        },
-        "Unhandled error occurred",
-      );
-
-      if (hasZodFastifySchemaValidationErrors(err)) {
-        return reply.code(400).send({
-          error: "Response Validation Error",
-          message: "Request doesn't match the schema",
-          statusCode: 400,
-          details: {
-            issues: err.validation,
-            method: request.method,
-            url: request.url,
-          },
-        });
-      }
-
-      if (isResponseSerializationError(err)) {
-        return reply.code(500).send({
-          error: "Internal Server Error",
-          message: "Response doesn't match the schema",
-          statusCode: 500,
-          details: {
-            issues: err.cause.issues,
-            method: err.method,
-            url: err.url,
-          },
-        });
-      }
-
-      reply.code(err.statusCode ?? 500);
-
-      let message = "Internal Server Error";
-      if (err.statusCode && err.statusCode < 500) {
-        message = err.message;
-      }
-
-      return { message };
-    },
-  );
+  fastify.setErrorHandler(errorHandler(fastify));
 
   // 404 error handling
   fastify.setNotFoundHandler((request: FastifyRequest, reply: FastifyReply) => {

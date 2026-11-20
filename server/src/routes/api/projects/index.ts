@@ -44,7 +44,7 @@ export default async function (fastify: FastifyInstance) {
     },
     async function (req) {
       const { projectId, userId } = req.body;
-      projectsRepository.createProjectMember(projectId, userId);
+      return await projectsRepository.createProjectMember(projectId, userId);
     },
   );
 }

@@ -41,3 +41,15 @@ GET {{baseUrl}}/projects/list
 ###
 
 delete {{baseUrl}}/projects/5819d671-9f70-49cd-be8e-a7672916fce1
+
+###
+
+post {{baseUrl}}/projects/create-member
+content-type: application/json
+
+{
+    "userId": "a8e2f30e-d92d-40fa-813c-c69d44cd4b34",
+    "projectId": "6083b5dc-858b-40ad-a7a2-9766ab4a2400"
+}
+
+###
