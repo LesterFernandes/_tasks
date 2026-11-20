@@ -1,6 +1,7 @@
 import { type FastifyInstance, type FastifyRequest } from "fastify";
-import { ZUser, type TUser } from "../../../schemas/users.ts";
+import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
+import { ZUser, type TUser } from "../../../schemas/users.ts";
 
 export default async function (fastify: FastifyInstance) {
   fastify.get("/list", async function () {
@@ -28,7 +29,7 @@ export default async function (fastify: FastifyInstance) {
    * added error handler for id not present in db
    * error handlers for drizzle db handling
    */
-  fastify.delete(
+  fastify.withTypeProvider<ZodTypeProvider>().delete(
     "/:id",
     {
       schema: {
@@ -37,8 +38,8 @@ export default async function (fastify: FastifyInstance) {
         }),
       },
     },
-    async function (req: FastifyRequest) {
-      return await fastify.usersRepository.deleteUser(req.params!.id);
+    async function (req) {
+      return await fastify.usersRepository.deleteUser(req.params.id);
     },
   );
 }

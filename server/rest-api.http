@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:3020/api
+get http://127.0.0.1:3020/test
+
+###
+
+get {{baseUrl}}/test
+
+###
+
+POST http://localhost:3020/api/users/create HTTP/1.1
+content-type: application/json
+
+{
+    "name": "john",
+    "email": "johnnybuoy@mail.com"
+}
+
+###
+
+GET {{baseUrl}}/users/list
+
+###
+
+DELETE {{baseUrl}}/users/1c43e755-8839-4284-bddb-6b510691798c HTTP/1.1
+
+###
+
+POST {{baseUrl}}/projects/create
+content-type: application/json
+
+{
+    "name": "project 2",
+    "description": "meh meh meh meeeh",
+    "createdBy": "a8e2f30e-d92d-40fa-813c-c69d44cd4b34"
+}
+
+###
+
+GET {{baseUrl}}/projects/list
+
+###
+
+delete {{baseUrl}}/projects/5819d671-9f70-49cd-be8e-a7672916fce1
