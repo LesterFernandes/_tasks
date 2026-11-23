@@ -11,6 +11,7 @@ export default async function (fastify: FastifyInstance) {
   /**
    * ///-
    * improve error handlers, even at global level
+   * add rbac support
    *
    */
   fastify.post(

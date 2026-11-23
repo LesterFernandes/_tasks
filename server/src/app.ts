@@ -1,4 +1,5 @@
 import fastifyAutoload from "@fastify/autoload";
+import cors from "@fastify/cors";
 import {
   type FastifyInstance,
   type FastifyPluginOptions,
@@ -16,6 +17,12 @@ export default async function App(
   fastify: FastifyInstance,
   opts: FastifyPluginOptions,
 ) {
+  //cors
+  fastify.register(cors, {
+    origin: true, // reflects the request's Origin header, so any site is allowed
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  });
   // Add schema validator and serializer
   fastify.setValidatorCompiler(validatorCompiler);
   fastify.setSerializerCompiler(serializerCompiler);

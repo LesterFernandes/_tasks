@@ -8,6 +8,9 @@ dependencies:
   '@fastify/autoload':
     specifier: ^6.6.0
     version: 6.6.0
+  '@fastify/cors':
+    specifier: ^11.4.3
+    version: 11.4.3
   '@fastify/error':
     specifier: ^4.2.1
     version: 4.2.1
@@ -68,6 +71,13 @@ packages:
 
   /@fastify/autoload@6.6.0:
     resolution: {integrity: sha512-AuPwbdsc0PUlfGXx6NgSoP2HnNg5qV1jV+hezugkvQnJ3O4ygaCxF6Xdr5pgNm3t2mokXXmIW4HOLeSdqiAR+A==}
+    dev: false
+
+  /@fastify/cors@11.4.3:
+    resolution: {integrity: sha512-6NNFNR1i9t1oG1WlQftwc2ugElFm4cG75ylYyGNiKKiyxlVGueneup9MQ9Nd3eI4lT6kVOJaxV1Jqa727/E4jg==}
+    dependencies:
+      fastify-plugin: 6.0.1
+      toad-cache: 3.7.4
     dev: false
 
   /@fastify/deepmerge@3.2.4:
