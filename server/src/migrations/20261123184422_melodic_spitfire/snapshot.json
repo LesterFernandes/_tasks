@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "a99e9e54-86c7-4f9c-9353-0a57f62478c4",
+  "prevIds": [
+    "b0e59509-f839-436f-aa96-128b2ae9226a"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "tasks",
+        "assigned_to"
+      ],
+      "writes": [
+        "s|col|public.tasks.assigned_to",
+        "n|col|public.tasks.assigned_to",
+        "e|col|public.tasks.assigned_to"
+      ],
+      "reads": [
+        "n|tbl|public.tasks",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tasks",
+        "name": "assigned_to",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}
