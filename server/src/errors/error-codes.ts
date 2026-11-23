@@ -6,6 +6,22 @@ export const RequestValidationError = createError(
   400,
 );
 
+export const BadRequest = createError("ERR_BAD_REQUEST", "Bad Request", 400);
+
+export const UserNotFound = createError(
+  "ERR_USER_NOT_FOUND",
+  "Bad Request",
+  400,
+);
+
+export const Unauthorized = createError(
+  "ERR_UNAUTHORIZED",
+  "User is not authorized",
+  401,
+);
+
+export const Forbidden = createError("ERR_FORBIDDEN", "Forbidden", 403);
+
 export const InternalServerError = createError(
   "ERR_INTERNAL_SERVER",
   "Internal Server Error",

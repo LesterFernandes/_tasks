@@ -1,12 +1,20 @@
+import argon2 from "argon2";
 import { type FastifyInstance, type FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
+import { InternalServerError } from "../../../errors/error-codes.ts";
 import { ZUser, type TUser } from "../../../schemas/users.ts";
 
 export default async function (fastify: FastifyInstance) {
-  fastify.get("/list", async function () {
-    return await fastify.usersRepository.getAllUsers();
-  });
+  fastify.get(
+    "/list",
+    {
+      onRequest: [fastify.authMiddleware("admin")],
+    },
+    async function (req: FastifyRequest) {
+      return await fastify.usersRepository.getAllUsers();
+    },
+  );
 
   /**
    * ///-
@@ -18,10 +26,21 @@ export default async function (fastify: FastifyInstance) {
     "/create",
     {
       schema: { body: ZUser },
+      onRequest: [fastify.authMiddleware("admin")],
     },
-    async function (req: FastifyRequest) {
-      const { name, email } = req.body as TUser;
-      return await fastify.usersRepository.insertUser(name, email);
+    async function (req) {
+      try {
+        const { email, name, password, role } = req.body as TUser;
+        const hash = await argon2.hash(password);
+        return await fastify.usersRepository.insertUser({
+          email,
+          name,
+          passwordHash: hash,
+          role,
+        });
+      } catch (error) {
+        throw new InternalServerError();
+      }
     },
   );
 
@@ -38,6 +57,7 @@ export default async function (fastify: FastifyInstance) {
           id: z.uuid(),
         }),
       },
+      onRequest: [fastify.authMiddleware("admin")],
     },
     async function (req) {
       return await fastify.usersRepository.deleteUser(req.params.id);

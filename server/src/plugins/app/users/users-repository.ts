@@ -1,7 +1,9 @@
 import { eq } from "drizzle-orm";
 import { type FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
+import { UserNotFound } from "../../../errors/error-codes.ts";
 import { usersTable } from "../../../schemas/database/schema.ts";
+import type { TUser } from "../../../schemas/users.ts";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -22,13 +24,30 @@ export function createUsersRepository(fastify: FastifyInstance) {
         .from(usersTable)
         .where(eq(usersTable.id, id));
     },
-    async insertUser(name: string, email: string) {
+    async getUserByEmail(email: string) {
+      const userRow = await drizzle
+        .select({
+          id: usersTable.id,
+          email: usersTable.email,
+          hash: usersTable.passwordHash,
+          role: usersTable.role,
+        })
+        .from(usersTable)
+        .where(eq(usersTable.email, email));
+      if (userRow.length == 1) {
+        return userRow[0];
+      } else {
+        throw new UserNotFound();
+      }
+    },
+    async insertUser(
+      userDetails: Pick<TUser, "email" | "name" | "role"> & {
+        passwordHash: string;
+      },
+    ) {
       return await drizzle
         .insert(usersTable)
-        .values({
-          name,
-          email,
-        })
+        .values(userDetails)
         .returning({ insertedId: usersTable.id });
     },
     async deleteUser(id: string) {

@@ -1,18 +1,27 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
-import { ZProject, type TProject } from "../../../schemas/projects.ts";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
+import { ZProject, type TProject } from "../../../schemas/projects.ts";
 
 export default async function (fastify: FastifyInstance) {
   const { projectsRepository } = fastify;
 
-  fastify.get("/list", async function () {
-    return await fastify.projectsRepository.getAllProjects();
-  });
+  fastify.get(
+    "/list",
+    {
+      onRequest: [fastify.authMiddleware("admin")],
+    },
+    async function () {
+      return await fastify.projectsRepository.getAllProjects();
+    },
+  );
 
   fastify.post(
     "/create",
-    { schema: { body: ZProject } },
+    {
+      schema: { body: ZProject },
+      onRequest: [fastify.authMiddleware("admin")],
+    },
     async function (req: FastifyRequest) {
       return await projectsRepository.createProject(req.body as TProject);
     },
@@ -26,6 +35,7 @@ export default async function (fastify: FastifyInstance) {
           id: z.uuid(),
         }),
       },
+      onRequest: [fastify.authMiddleware("admin")],
     },
     async function (req) {
       return await projectsRepository.deleteProject(req.params.id);
@@ -41,6 +51,7 @@ export default async function (fastify: FastifyInstance) {
           userId: z.uuid(),
         }),
       },
+      onRequest: [fastify.authMiddleware("admin")],
     },
     async function (req) {
       const { projectId, userId } = req.body;

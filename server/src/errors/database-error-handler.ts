@@ -101,6 +101,7 @@ const PG_ERROR_MAP: Record<string, FastifyErrorConstructor> = {
 export const databaseErrorHandler = (err: FastifyError) => {
   if (err instanceof DrizzleQueryError && err.cause) {
     const pgError = err.cause;
+    // @ts-ignore
     const ErrorClass = pgError.code ? PG_ERROR_MAP[pgError.code] : undefined;
     if (ErrorClass) {
       throw new ErrorClass();

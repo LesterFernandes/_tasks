@@ -33,6 +33,7 @@ export const usersTable = pgTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   role: userRoleEnum("role").notNull().default("user"),
+  passwordHash: text("password_hash").notNull(),
   ...timeStamps,
 });
 
@@ -80,7 +81,7 @@ export const tasksTable = pgTable("tasks", {
   createdBy: uuid("created_by")
     .notNull()
     .references(() => usersTable.id, { onDelete: "restrict" }),
-  // assignedTo: uuid("assigned_to"),
+  assignedTo: uuid("assigned_to"),
   // Persistent drag-and-drop ordering.
   // position: integer("position"),
   ...timeStamps,
@@ -134,10 +135,9 @@ export const tasksRelations = relations(tasksTable, ({ one }) => ({
     references: [usersTable.id],
     relationName: "taskCreator",
   }),
-
-  // assignee: one(usersTable, {
-  //   fields: [tasksTable.assignedTo],
-  //   references: [usersTable.id],
-  //   relationName: "taskAssignee",
-  // }),
+  assignee: one(usersTable, {
+    fields: [tasksTable.assignedTo],
+    references: [usersTable.id],
+    relationName: "taskAssignee",
+  }),
 }));
