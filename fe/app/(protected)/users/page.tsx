@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import ky from "ky";
 import CreateUserDialog from "./createUser";
-import { TUser } from "@/app/types";
+import { TUser } from "@/types";
 
 export default async function Users() {
   const response = await ky("http://localhost:3020/api/users/list");

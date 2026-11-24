@@ -19,7 +19,8 @@ export default async function App(
 ) {
   //cors
   fastify.register(cors, {
-    origin: true, // reflects the request's Origin header, so any site is allowed
+    origin: "http://localhost:3000",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });

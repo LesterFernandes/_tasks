@@ -1,4 +1,3 @@
-import { TProject } from "@/app/types";
 import {
   Card,
   CardAction,
@@ -6,11 +5,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ky from "ky";
+import { api } from "@/lib/api";
+import { TProject } from "@/types";
+import { cookies } from "next/headers";
 import CreateProjectDialog from "./createProject";
 
 export default async function Projects() {
-  const response = await ky("http://localhost:3020/api/projects/list");
+  // const response = await ky("http://localhost:3020/api/projects/list", {
+  //   headers: token ? { Cookie: `token=${token}` } : {},
+  //   cache: "no-store",
+  // });
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  const response = await api("/api/projects/list", {
+    headers: token ? { Cookie: `token=${token}` } : {},
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch posts");

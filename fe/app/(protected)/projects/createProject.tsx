@@ -11,24 +11,32 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
-import ky from "ky";
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function CreateProjectDialog() {
+  const router = useRouter();
   const createProject = async (formData: FormData) => {
     const desc = formData.get("desc");
     const name = formData.get("name");
 
-    /// add rbac supposrt
-    const response = await ky.post(
-      "http://localhost:3020/api/projects/create",
-      {
-        json: {
-          description: desc,
-          name,
-          createdBy: "a8e2f30e-d92d-40fa-813c-c69d44cd4b34",
-        },
+    // const response = await ky.post(
+    //   "http://localhost:3020/api/projects/create",
+    //   {
+    //     json: {
+    //       description: desc,
+    //       name,
+    //       createdBy: "a8e2f30e-d92d-40fa-813c-c69d44cd4b34",
+    //     },
+    //   },
+    // );
+    //
+    const response = await api.post("/api/projects/create", {
+      json: {
+        description: desc,
+        name,
       },
-    );
+    });
 
     /// make these toasts work
     if (!response.ok) {
@@ -42,6 +50,7 @@ export default function CreateProjectDialog() {
         type: "success",
         description: "Project has been created.",
       });
+      router.refresh();
     }
   };
 
