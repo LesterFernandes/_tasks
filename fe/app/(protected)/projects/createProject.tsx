@@ -19,18 +19,6 @@ export default function CreateProjectDialog() {
   const createProject = async (formData: FormData) => {
     const desc = formData.get("desc");
     const name = formData.get("name");
-
-    // const response = await ky.post(
-    //   "http://localhost:3020/api/projects/create",
-    //   {
-    //     json: {
-    //       description: desc,
-    //       name,
-    //       createdBy: "a8e2f30e-d92d-40fa-813c-c69d44cd4b34",
-    //     },
-    //   },
-    // );
-    //
     const response = await api.post("/api/projects/create", {
       json: {
         description: desc,
@@ -38,7 +26,6 @@ export default function CreateProjectDialog() {
       },
     });
 
-    /// make these toasts work
     if (!response.ok) {
       toast.add({
         type: "error",
@@ -58,7 +45,7 @@ export default function CreateProjectDialog() {
     <>
       <Dialog>
         <DialogTrigger
-          render={<Button variant="outline">Create Project</Button>}
+          render={<Button variant="default">Create Project</Button>}
         />
         <DialogContent>
           <DialogHeader>
@@ -66,13 +53,27 @@ export default function CreateProjectDialog() {
           </DialogHeader>
           <div className="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
             <form action={createProject}>
-              <Input type="text" name="name" placeholder="Name" required />
-              <Textarea
-                id="textarea-desc"
-                placeholder="Type a project description here..."
-                name="desc"
-              />
-              <Button type="submit">Create</Button>
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Input
+                    type="text"
+                    name="name"
+                    placeholder="Project name"
+                    required
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Textarea
+                    id="textarea-desc"
+                    placeholder="Type a project description here..."
+                    name="desc"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Button type="submit">Create</Button>
+                </div>
+              </div>
             </form>
           </div>
         </DialogContent>

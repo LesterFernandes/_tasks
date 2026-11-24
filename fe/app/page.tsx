@@ -1,7 +1,5 @@
+"use client";
+
 export default function Home() {
-  return (
-    <>
-      <h1>Horrified</h1>
-    </>
-  );
+  return null;
 }
