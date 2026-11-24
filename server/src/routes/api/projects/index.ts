@@ -16,14 +16,18 @@ export default async function (fastify: FastifyInstance) {
     },
   );
 
-  fastify.post(
+  fastify.withTypeProvider<ZodTypeProvider>().post(
     "/create",
     {
       schema: { body: ZProject },
       onRequest: [fastify.authMiddleware("admin")],
     },
-    async function (req: FastifyRequest) {
-      return await projectsRepository.createProject(req.body as TProject);
+    async function (req) {
+      return await projectsRepository.createProject({
+        name: req.body.name,
+        description: req.body.description,
+        createdBy: req.user.id,
+      });
     },
   );
 
@@ -56,6 +60,20 @@ export default async function (fastify: FastifyInstance) {
     async function (req) {
       const { projectId, userId } = req.body;
       return await projectsRepository.createProjectMember(projectId, userId);
+    },
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/details/:projectId",
+    {
+      schema: {
+        params: z.object({
+          projectId: z.uuid(),
+        }),
+      },
+    },
+    async function (req) {
+      return await projectsRepository.getProjectDetails(req.params.projectId);
     },
   );
 }

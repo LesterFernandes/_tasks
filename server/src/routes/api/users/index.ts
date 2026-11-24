@@ -1,8 +1,7 @@
 import argon2 from "argon2";
-import { type FastifyInstance, type FastifyRequest } from "fastify";
+import { type FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
-import { InternalServerError } from "../../../errors/error-codes.ts";
 import { ZUser, type TUser } from "../../../schemas/users.ts";
 
 export default async function (fastify: FastifyInstance) {
@@ -11,17 +10,11 @@ export default async function (fastify: FastifyInstance) {
     {
       onRequest: [fastify.authMiddleware("admin")],
     },
-    async function (req: FastifyRequest) {
+    async function () {
       return await fastify.usersRepository.getAllUsers();
     },
   );
 
-  /**
-   * ///-
-   * improve error handlers, even at global level
-   * add rbac support
-   *
-   */
   fastify.post(
     "/create",
     {
@@ -39,7 +32,7 @@ export default async function (fastify: FastifyInstance) {
           role,
         });
       } catch (error) {
-        throw new InternalServerError();
+        throw error;
       }
     },
   );

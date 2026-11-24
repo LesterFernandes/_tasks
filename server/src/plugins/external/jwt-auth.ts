@@ -48,7 +48,7 @@ export default fp(
     });
 
     fastify.decorate("authMiddleware", (...roles: Role[]) => {
-      return async (request: FastifyRequest, reply: FastifyReply) => {
+      return async (request: FastifyRequest) => {
         try {
           await request.jwtVerify();
         } catch {

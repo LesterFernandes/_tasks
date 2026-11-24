@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, ne } from "drizzle-orm";
 import { type FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { UserNotFound } from "../../../errors/error-codes.ts";
@@ -16,11 +16,24 @@ export function createUsersRepository(fastify: FastifyInstance) {
 
   return {
     async getAllUsers() {
-      return await drizzle.select().from(usersTable);
+      return await drizzle
+        .select({
+          id: usersTable.id,
+          email: usersTable.email,
+          name: usersTable.name,
+          role: usersTable.role,
+        })
+        .from(usersTable)
+        .where(ne(usersTable.role, "admin"));
     },
     async getUserById(id: string) {
       return await drizzle
-        .select()
+        .select({
+          id: usersTable.id,
+          email: usersTable.email,
+          name: usersTable.name,
+          role: usersTable.role,
+        })
         .from(usersTable)
         .where(eq(usersTable.id, id));
     },

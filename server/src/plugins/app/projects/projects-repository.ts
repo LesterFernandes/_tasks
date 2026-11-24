@@ -1,12 +1,14 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import type { FastifyInstance } from "fastify";
+import fp from "fastify-plugin";
 import {
   projectMembersTable,
   projectsTable,
+  tasksTable,
+  usersTable,
 } from "../../../schemas/database/schema.ts";
 import type { TProject } from "../../../schemas/projects.ts";
-import fp from "fastify-plugin";
-
 declare module "fastify" {
   interface FastifyInstance {
     projectsRepository: ReturnType<typeof createProjectsRepository>;
@@ -43,6 +45,72 @@ export function createProjectsRepository(fastify: FastifyInstance) {
           userId,
         })
         .returning();
+    },
+    async getProjectDetails(projectId: string) {
+      const creator = alias(usersTable, "creator");
+      const assignee = alias(usersTable, "assignee");
+
+      const [[project], users, tasks] = await Promise.all([
+        // project + creator
+        drizzle
+          .select({
+            id: projectsTable.id,
+            name: projectsTable.name,
+            description: projectsTable.description,
+            createdAt: projectsTable.createdAt,
+            updatedAt: projectsTable.updatedAt,
+            creator: {
+              id: creator.id,
+              name: creator.name,
+              email: creator.email,
+            },
+          })
+          .from(projectsTable)
+          .innerJoin(creator, eq(projectsTable.createdBy, creator.id))
+          .where(eq(projectsTable.id, projectId))
+          .limit(1),
+
+        // users in the project, role "user" only
+        drizzle
+          .select({
+            id: usersTable.id,
+            name: usersTable.name,
+            email: usersTable.email,
+            role: usersTable.role,
+            joinedAt: projectMembersTable.joinedAt,
+          })
+          .from(projectMembersTable)
+          .innerJoin(usersTable, eq(projectMembersTable.userId, usersTable.id))
+          .where(
+            and(
+              eq(projectMembersTable.projectId, projectId),
+              eq(usersTable.role, "user"),
+            ),
+          ),
+
+        // tasks + assignee (left join, since assignedTo is nullable)
+        drizzle
+          .select({
+            id: tasksTable.id,
+            name: tasksTable.name,
+            description: tasksTable.description,
+            status: tasksTable.status,
+            createdAt: tasksTable.createdAt,
+            assignee: {
+              id: assignee.id,
+              name: assignee.name,
+              email: assignee.email,
+            },
+          })
+          .from(tasksTable)
+          .leftJoin(assignee, eq(tasksTable.assignedTo, assignee.id))
+          .where(eq(tasksTable.projectId, projectId))
+          .orderBy(desc(tasksTable.createdAt)),
+      ]);
+
+      if (!project) return null;
+
+      return { ...project, users, tasks };
     },
   };
 }
