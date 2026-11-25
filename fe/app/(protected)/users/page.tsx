@@ -30,7 +30,7 @@ export default async function Users() {
   return (
     <div className="container p-2">
       <CreateUserDialog />
-      <Table className="mt-4 max-w-3xl w-full">
+      <Table className="mt-4 max-w-lg w-full">
         <TableCaption>Users List</TableCaption>
         <TableHeader>
           <TableRow>
