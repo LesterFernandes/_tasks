@@ -4,14 +4,23 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { readTokenClaims } from "@/lib/token";
+import { cookies } from "next/headers";
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function ProtectedLayerLayout({
+  children,
+  params,
+}: LayoutProps<"/">) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const { role } = readTokenClaims(token!);
+
   return (
     <SidebarProvider>
-      <Nav />
+      <Nav role={role} />
       <SidebarInset>
         <main>
-          <SidebarTrigger size="icon-lg" />
+          <SidebarTrigger size="icon-lg" className="cursor-pointer" />
           {children}
         </main>
       </SidebarInset>
