@@ -8,6 +8,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", ["admin", "user"]);
@@ -83,7 +84,7 @@ export const tasksTable = pgTable("tasks", {
     .references(() => usersTable.id, { onDelete: "restrict" }),
   assignedTo: uuid("assigned_to"),
   // Persistent drag-and-drop ordering.
-  // position: integer("position"),
+  position: integer("position").notNull().default(0),
   ...timeStamps,
 });
 

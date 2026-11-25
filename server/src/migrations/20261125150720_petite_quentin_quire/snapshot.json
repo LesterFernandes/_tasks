@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "d246352d-1e23-475e-9225-d13205aeb877",
+  "prevIds": [
+    "a99e9e54-86c7-4f9c-9353-0a57f62478c4"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "tasks",
+        "position"
+      ],
+      "writes": [
+        "s|col|public.tasks.position",
+        "n|col|public.tasks.position",
+        "e|col|public.tasks.position"
+      ],
+      "reads": [
+        "n|tbl|public.tasks",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tasks",
+        "name": "position",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}
