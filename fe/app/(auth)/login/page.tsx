@@ -30,7 +30,6 @@ export default function Login() {
       },
     });
 
-    /// make these toasts work
     if (!response.ok) {
       toast.add({
         type: "error",

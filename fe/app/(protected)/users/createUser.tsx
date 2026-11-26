@@ -26,7 +26,6 @@ export default function CreateUserDialog() {
       json: { email, name, role: "user", password: pw },
     });
 
-    ///Duplicate user error message
     if (!response.ok) {
       toast.add({
         type: "error",

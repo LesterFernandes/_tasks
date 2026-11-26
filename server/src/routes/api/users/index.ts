@@ -37,11 +37,6 @@ export default async function (fastify: FastifyInstance) {
     },
   );
 
-  /**
-   * ///
-   * added error handler for id not present in db
-   * error handlers for drizzle db handling
-   */
   fastify.withTypeProvider<ZodTypeProvider>().delete(
     "/:id",
     {

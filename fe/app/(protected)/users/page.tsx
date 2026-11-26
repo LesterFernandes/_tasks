@@ -26,7 +26,6 @@ export default async function Users() {
 
   const users: TUser[] = await response.json();
 
-  ///implement user deelte
   return (
     <div className="container p-2">
       <CreateUserDialog />
