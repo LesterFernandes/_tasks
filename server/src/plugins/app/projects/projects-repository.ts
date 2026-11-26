@@ -22,11 +22,20 @@ export function createProjectsRepository(fastify: FastifyInstance) {
     async getAllProjects() {
       return await drizzle.select().from(projectsTable);
     },
-    async getProjectById(id: string) {
+    async getProjectsAssociatedWithUser(userId: string) {
       return await drizzle
-        .select()
-        .from(projectsTable)
-        .where(eq(projectsTable.id, id));
+        .select({
+          id: projectsTable.id,
+          name: projectsTable.name,
+          description: projectsTable.description,
+          createdBy: projectsTable.createdBy,
+        })
+        .from(projectMembersTable)
+        .innerJoin(
+          projectsTable,
+          eq(projectMembersTable.projectId, projectsTable.id),
+        )
+        .where(eq(projectMembersTable.userId, userId));
     },
     async createProject(projectDetails: TProject) {
       return await drizzle.insert(projectsTable).values(projectDetails);

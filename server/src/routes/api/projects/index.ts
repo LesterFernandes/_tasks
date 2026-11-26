@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
-import { ZProject, type TProject } from "../../../schemas/projects.ts";
+import { ZProject } from "../../../schemas/projects.ts";
 
 export default async function (fastify: FastifyInstance) {
   const { projectsRepository } = fastify;
@@ -9,10 +9,16 @@ export default async function (fastify: FastifyInstance) {
   fastify.get(
     "/list",
     {
-      onRequest: [fastify.authMiddleware("admin")],
+      onRequest: [fastify.authMiddleware("admin", "user")],
     },
-    async function () {
-      return await fastify.projectsRepository.getAllProjects();
+    async function (req: FastifyRequest) {
+      if (req.user.role == "admin") {
+        return await fastify.projectsRepository.getAllProjects();
+      } else {
+        return await fastify.projectsRepository.getProjectsAssociatedWithUser(
+          req.user.id,
+        );
+      }
     },
   );
 
@@ -71,6 +77,7 @@ export default async function (fastify: FastifyInstance) {
           projectId: z.uuid(),
         }),
       },
+      onRequest: [fastify.authMiddleware("admin", "user")],
     },
     async function (req) {
       return await projectsRepository.getProjectDetails(req.params.projectId);

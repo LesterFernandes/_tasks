@@ -1,11 +1,7 @@
 import fastifyCookie from "@fastify/cookie";
 import jwt from "@fastify/jwt";
 import dotenv from "dotenv";
-import {
-  type FastifyInstance,
-  type FastifyReply,
-  type FastifyRequest,
-} from "fastify";
+import { type FastifyInstance, type FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import { Forbidden, Unauthorized } from "../../errors/error-codes.ts";
 

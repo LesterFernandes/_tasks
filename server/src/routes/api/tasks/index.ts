@@ -38,7 +38,10 @@ export default async function (fastify: FastifyInstance) {
       onRequest: [fastify.authMiddleware("admin", "user")],
     },
     async function (req) {
-      return await fastify.tasksRepository.insertTask(req.body);
+      return await fastify.tasksRepository.insertTask({
+        ...req.body,
+        createdBy: req.user.id,
+      });
     },
   );
 

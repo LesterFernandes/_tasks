@@ -4,10 +4,9 @@ export const ZStatusEnum = z.enum(["pending", "in_progress", "completed"]);
 
 export const ZTask = z.object({
   name: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   status: ZStatusEnum,
   projectId: z.uuid(),
-  createdBy: z.string(),
   assignedTo: z.uuid().optional(),
 });
 
