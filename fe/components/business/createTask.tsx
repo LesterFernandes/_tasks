@@ -21,17 +21,21 @@ import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
-import { IProjectDetails, TTask, TUser } from "@/types";
+import { IProjectDetails, TUser } from "@/types";
 import { useState } from "react";
 
 interface Props {
   projectId: string;
   members: IProjectDetails["users"];
-  mode?: "edit" | "create";
-  taskDetails?: Partial<TTask>;
 }
 
-export default function ManageTask({ projectId, members }: Props) {
+export const status_options = [
+  { label: "Pending", value: "pending" },
+  { label: "In Progress", value: "in_progress" },
+  { label: "Completed", value: "completed" },
+];
+
+export default function CreateTask({ projectId, members }: Props) {
   const router = useRouter();
   const [newMember, setNewMember] = useState<TUser | null>(null);
 
@@ -83,15 +87,15 @@ export default function ManageTask({ projectId, members }: Props) {
             </div>
             <div className="grid flex-1 gap-2">
               <Label htmlFor="status">Status</Label>
-              <Select name="status" id="status">
+              <Select name="status" id="status" items={status_options}>
                 <SelectTrigger>
                   <SelectValue placeholder="New member email" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {["pending", "in_progress", "completed"].map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
+                    {status_options.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
                       </SelectItem>
                     ))}
                   </SelectGroup>

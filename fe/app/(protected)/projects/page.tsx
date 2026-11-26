@@ -5,19 +5,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { api } from "@/lib/api";
-import { TProject } from "@/types";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import CreateProjectDialog from "./createProject";
-import { readTokenClaims } from "@/lib/token";
-import { ListCheck } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@base-ui/react";
+import { api } from "@/lib/api";
+import { readTokenClaims } from "@/lib/token";
+import { TProject } from "@/types";
+import { ListCheck } from "lucide-react";
+import { cookies } from "next/headers";
+import Link from "next/link";
+import CreateProjectDialog from "./createProject";
 
 export default async function Projects() {
   const cookieStore = await cookies();

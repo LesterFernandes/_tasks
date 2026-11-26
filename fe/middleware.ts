@@ -1,43 +1,47 @@
-// middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = req.cookies.get("token")?.value; // Match your Fastify cookie name
+  const token = req.cookies.get("token")?.value;
 
-  // Allow public login page
+  // Allow public routes
   if (pathname.startsWith("/login")) {
     return NextResponse.next();
   }
 
-  // Redirect to /login if no token exists
+  // Require login for everything else
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   try {
     const { payload } = await jwtVerify(token, secret);
-    const role = payload.role as string;
-    console.log(role, payload);
+    const role = payload.role as "admin" | "user";
 
-    // RBAC: Block non-admins from /users
-    if (role !== "admin") {
-      return NextResponse.redirect(new URL("/projects", req.url));
+    // Admin gets full access
+    if (role === "admin") {
+      return NextResponse.next();
     }
 
-    return NextResponse.next();
+    // Regular "user" RBAC rules:
+    // Allow /projects, /projects/<project_id>
+    if (role === "user" && pathname.startsWith("/projects")) {
+      return NextResponse.next();
+    }
+
+    // Redirect unauthorized users
+    return NextResponse.redirect(new URL("/unauthorized", req.url));
   } catch {
-    // Token expired or tampered with
     const res = NextResponse.redirect(new URL("/login", req.url));
     res.cookies.delete("token");
     return res;
   }
 }
 
+// Only run middleware on app routes (skip static files & Next internals)
 export const config = {
-  matcher: ["/projects/:path*", "/users/:path*", "/login"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

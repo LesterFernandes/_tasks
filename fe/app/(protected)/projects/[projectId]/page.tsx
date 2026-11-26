@@ -2,7 +2,8 @@ import ProjectMembers from "@/components/business/projectMembers";
 import { TasksBoard } from "@/components/business/tasksBoard";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/api";
-import { IProjectDetails, TUser } from "@/types";
+import { readTokenClaims } from "@/lib/token";
+import { IProjectDetails } from "@/types";
 import { cookies } from "next/headers";
 
 export default async function ProjectPage({
@@ -23,14 +24,7 @@ export default async function ProjectPage({
   }
   const details: IProjectDetails = await detailsResponse.json();
 
-  const usersResponse = await api("/api/users/list", {
-    headers: token ? { Cookie: `token=${token}` } : {},
-    cache: "no-store",
-  });
-  if (!usersResponse.ok) {
-    throw new Error("Failed to load users list");
-  }
-  const list: TUser[] = await usersResponse.json();
+  const { role } = readTokenClaims(token!);
 
   return (
     <div className="p-4">
@@ -40,11 +34,9 @@ export default async function ProjectPage({
         members={details.users}
       />
       <Separator className="my-2" />
-      <ProjectMembers
-        members={details.users}
-        projectId={projectId}
-        users={list}
-      />
+      {role == "admin" && (
+        <ProjectMembers members={details.users} projectId={projectId} />
+      )}
     </div>
   );
 }

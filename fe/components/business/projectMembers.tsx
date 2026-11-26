@@ -21,19 +21,31 @@ import {
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { api } from "@/lib/api";
 import { IProjectDetails, TUser } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "../ui/toast";
 import { useRouter } from "next/navigation";
 
 interface Props {
   members: IProjectDetails["users"];
-  users: TUser[];
   projectId: string;
 }
 
 export default function ProjectMembers(props: Props) {
   const router = useRouter();
   const [newMember, setNewMember] = useState<TUser | null>(null);
+  const [users, setUsers] = useState<TUser[]>([]);
+
+  useEffect(() => {
+    async function getUsersList() {
+      const usersResponse = await api("/api/users/list");
+      if (!usersResponse.ok) {
+        throw new Error("Failed to load users list");
+      }
+      const list: TUser[] = await usersResponse.json();
+      setUsers(list);
+    }
+    getUsersList();
+  }, []);
 
   const addNewProjectMember = async () => {
     const res = await api.post("/api/projects/create-member", {
@@ -91,7 +103,7 @@ export default function ProjectMembers(props: Props) {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {props.users.map(({ email, id }) => (
+                {users.map(({ email, id }) => (
                   <SelectItem key={id} value={{ email, id }}>
                     {email}
                   </SelectItem>

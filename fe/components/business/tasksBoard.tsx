@@ -1,31 +1,47 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { IProjectDetails, TTask } from "@/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import ManageTask from "./manageTask";
+import CreateTask from "./createTask";
+import UpdateTask from "./updateTask";
 
 const ITEM_TYPE = "TASK";
 
 type DragItem = { id: string; index: number };
 type TaskCardProps = {
-  task: TTask;
+  task: IProjectDetails["tasks"][number];
+  members: IProjectDetails["users"];
+  projectId: string;
   index: number;
   moveTask: (from: number, to: number) => void;
   onDragEnd: () => void;
 };
 type TaskBoardProps = {
-  initialTasks: TTask[];
+  initialTasks: IProjectDetails["tasks"];
   projectId: string;
   members: IProjectDetails["users"];
   onReorder?: (orderedIds: string[]) => void;
 };
 
-function TaskCard({ task, index, moveTask, onDragEnd }: TaskCardProps) {
+function TaskCard({
+  task,
+  members,
+  index,
+  projectId,
+  moveTask,
+  onDragEnd,
+}: TaskCardProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop<DragItem>({
@@ -68,11 +84,15 @@ function TaskCard({ task, index, moveTask, onDragEnd }: TaskCardProps) {
   return (
     <div ref={ref} className={cn("w-40", isDragging && "opacity-40")}>
       <Card className="cursor-grab active:cursor-grabbing">
-        <CardHeader className="flex flex-row items-center gap-2 space-y-0 pb-2">
+        <CardHeader>
           <CardTitle className="truncate text-base">{task.name}</CardTitle>
+          <CardAction>
+            <UpdateTask task={task} members={members} projectId={projectId} />
+          </CardAction>
         </CardHeader>
         <CardFooter className="flex flex-row gap-2">
           <Badge variant={"secondary"}>{task.status}</Badge>
+          <Badge variant={"secondary"}>{task.assignee?.name}</Badge>
         </CardFooter>
       </Card>
     </div>
@@ -119,6 +139,8 @@ export function TasksBoard({
               <TaskCard
                 key={task.id}
                 task={task}
+                members={members}
+                projectId={projectId}
                 index={index}
                 moveTask={moveTask}
                 onDragEnd={handleDragEnd}
@@ -127,7 +149,7 @@ export function TasksBoard({
           </div>
         </DndProvider>
       </div>
-      <ManageTask projectId={projectId} members={members} />
+      <CreateTask projectId={projectId} members={members} />
     </>
   );
 }
