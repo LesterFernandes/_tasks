@@ -83,7 +83,7 @@ The frontend currently sends API requests to the hard-coded URL `http://localhos
    pnpm dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) and sign in with:
+5. Open [http://localhost:3000/login](http://localhost:3000/login) and sign in with:
 
    - Email: `admin@mail.com`
    - Password: `admin`
