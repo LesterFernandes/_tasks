@@ -48,7 +48,7 @@ async function init() {
   });
 
   server.listen(
-    { port: Number(process.env.PORT) ?? 3020 },
+    { port: Number(process.env.PORT ?? 3020) },
     function (err: Error | null, address: string) {
       if (err) {
         server.log.error(err);

@@ -13,6 +13,9 @@
     "start": "node --enable-source-maps --env-file-if-exists=.env dist/server.js",
     "dev": "nodemon",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:create": "node scripts/create-database.mjs",
+    "db:seed:admin": "node scripts/seed-admin.mjs",
+    "db:setup": "pnpm db:create && pnpm migration:apply && pnpm db:seed:admin",
     "migration:gen": "pnpm drizzle-kit generate",
     "migration:apply": "pnpm drizzle-kit migrate"
   },
